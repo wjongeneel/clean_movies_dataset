@@ -113,24 +113,29 @@ for director in directors:
 
 # insert data into movie db, movie_to_star db, movie_to_director db, and movie_to_genre db
 for i in df.index:
+
     # get title_id from title db
     title = df.title.iloc[i]
     cur.execute('SELECT id FROM title WHERE title = ?', (title,)) 
     title_id = cur.fetchone()[0]
+
     # get fields from dataframe
     rating = df.rating.iloc[i]
     one_line = df.one_line.iloc[i]
     votes = df.votes.iloc[i]
     start_year = df.start_year.iloc[i]
     end_year = df.end_year.iloc[i]
+
     # insert data into movie db
     cur.execute('''
     INSERT OR IGNORE INTO movie 
         (title_id, rating, one_line, votes, start_year, end_year)
         VALUES (?, ?, ?, ?, ?, ? )''', (title_id, rating, one_line, votes, start_year, end_year ) )
+
     # get movie_id
     cur.execute('SELECT id FROM movie WHERE rating = ? AND one_line = ? AND votes = ? AND start_year = ?', (rating, one_line, votes, start_year)) 
     movie_id = cur.fetchone()[0]
+
     # map star_id to movie_id in movie_to_star db 
     stars = df.stars.iloc[i]
     for star in stars:
@@ -139,6 +144,7 @@ for i in df.index:
         cur.execute('''
             INSERT OR IGNORE INTO movie_to_star (star_id, movie_id) VALUES (?, ?)
         ''', (star_id, movie_id))
+
     # map director_id to movie_id in movie_to_director db
     directors = df.directors.iloc[i]
     for director in directors: 
@@ -147,6 +153,7 @@ for i in df.index:
         cur.execute('''
             INSERT OR IGNORE INTO movie_to_director (director_id, movie_id) VALUES (?, ?)
         ''', (director_id, movie_id))
+        
     # map genre_id to movie_id in movie_to_genre db 
     genres = df.genre.iloc[i]
     for genre in genres: 
