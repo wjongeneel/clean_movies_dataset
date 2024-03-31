@@ -79,7 +79,11 @@ def set_stars_mv(df):
 
 def set_genre_mv(df):
     for i in df.index:
-        df.at[i, 'genre'] = df.genre.iloc[i].strip().split(',')
+        genres = df.genre.iloc[i].strip().split(',')
+        stripped_genres = list()
+        for genre in genres: 
+            stripped_genres.append(genre.strip())
+        df.at[i, 'genre'] = stripped_genres
     return df
 
 def mv_expand(df, column):
